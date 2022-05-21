@@ -104,7 +104,7 @@ DISKSIM_SRC = disksim.c disksim_intr.c disksim_pfsim.c \
 DISKSIM_OBJ = $(DISKSIM_SRC:.c=.o) 
 
 $(DISKSIM_OBJ): %.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@ -lm
 
 
 # production rule for making disksim with freeblocks support
@@ -125,7 +125,7 @@ libdisksim.a: $(MODULEDEPS) $(DISKSIM_OBJ) disksim_interface.o
 	cp libdisksim.a ../lib
 
 disksim : $(MODULEDEPS) libdisksim.a disksim_main.o 
-	$(CC) $(CFLAGS) -o $@ disksim_main.o $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ disksim_main.o $(LDFLAGS) -lm
 
 syssim: syssim_driver.o libdisksim.a
 	$(CC) $(CFLAGS) -o $@ syssim_driver.o disksim_interface.o $(LDFLAGS)

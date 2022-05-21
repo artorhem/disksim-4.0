@@ -34,7 +34,7 @@ LDFLAGS = -lm -L.
 DEBUG_OFLAGS = -g -DASSERTS # -DDEBUG=1
 PROF_OFLAGS = -g -DASSERTS -p
 GPROF_OFLAGS = -g -DASSERTS -pg
-CFLAGS = $(DEBUG_OFLAGS) $(DISKSIM_CFLAGS) -I../ -I$(DISKSIM_PREFIX)/src
+CFLAGS = $(DEBUG_OFLAGS) $(DISKSIM_CFLAGS) -I../ -I$(DISKSIM_PREFIX)/src -I$(DISKMODEL_PREFIX)
 
 CC = gcc -Wall -Wno-unused -MD
 CP = cp -p
@@ -75,10 +75,10 @@ MEMS_SRC = mems_seektest.c mems_internals.c mems_piecewise_seek.c mems_hong_seek
 MEMS_OBJ = $(MEMS_SRC:.c=.o) 
 
 $(MEMS_OBJ): %.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $< -o $@ -lm
 
 mems_seektest: mems_seektest.o libmems_internals.a
-	$(CC) -o $@ mems_seektest.o $(LDFLAGS) $(CFLAGS) -lmems_internals
+	$(CC) -o $@ mems_seektest.o $(LDFLAGS) $(CFLAGS) -lmems_internals -lm
 
 libmems_internals.a: mems_internals.o mems_piecewise_seek.o mems_hong_seek.o
 	ar cru $@ mems_internals.o mems_piecewise_seek.o mems_hong_seek.o

@@ -1672,7 +1672,7 @@ struct logorg *disksim_logorg_loadparams(struct lp_block *b)
 
 
 
-INLINE void logorg_set_arraydisk(struct logorg *l, int n) {
+ void logorg_set_arraydisk(struct logorg *l, int n) {
   l->arraydisk = n;
 }
 

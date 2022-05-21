@@ -3752,8 +3752,7 @@ void ioqueue_cleanstats (ioqueue *queue)
 
 ioqueue * ioqueue_createdefaultqueue ()
 {
-   ioqueue * queue = (ioqueue *) malloc(sizeof(ioqueue));
-   bzero(queue, sizeof(ioqueue));
+   ioqueue * queue = (ioqueue *) calloc(1, sizeof(ioqueue));
 
    queue->printqueuestats  = 1;
    queue->printcritstats   = 1;
@@ -3804,8 +3803,7 @@ struct ioq *disksim_ioqueue_loadparams(struct lp_block *b,
 {
   struct ioq *result;
 
-  result = malloc(sizeof(ioqueue));
-  bzero(result, sizeof(ioqueue));
+  result = calloc(1, sizeof(ioqueue));
 
   result->printqueuestats = printqueuestats;
   result->printcritstats = printcritstats;
@@ -3904,6 +3902,7 @@ static void ioqueue_printqueuestats (ioqueue **set, int setsize, char *prefix)
    fprintf (outputfile, "%sNumber of batches:  %d\n", prefix, stat_get_count_set(statset, setsize));
    stat_print_set(statset, setsize, prefix);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -3933,6 +3932,7 @@ static void ioqueue_printintarrstats (ioqueue **set, int setsize, char *prefix)
    }
    stat_print_set(statset, setsize, prefix);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -3962,6 +3962,7 @@ static void ioqueue_printsizestats (ioqueue **set, int setsize, char *prefix)
    }
    stat_print_set(statset, setsize, prefix);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -3982,6 +3983,7 @@ static void ioqueue_printidlestats (ioqueue **set, int setsize, char *prefix)
    fprintf (outputfile, "%sNumber of idle periods:  %d\n", prefix, stat_get_count_set(statset, setsize));
    stat_print_set(statset, setsize, prefix);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -4029,6 +4031,7 @@ static void ioqueue_printcritstats (subqueue **set, int setsize, char *prefix, i
    sprintf(prefix2, "%sNon-Critical Write ", prefix);
    stat_print_set(statset, setsize, prefix2);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -4093,6 +4096,7 @@ static void ioqueue_subqueue_printstats (subqueue **set, int setsize, char *pref
    }
    stat_print_set(statset, setsize, prefix);
    free(statset);
+   statset = NULL;
 }
 
 
@@ -4263,5 +4267,7 @@ void ioqueue_printstats (ioqueue **set, int setsize, char *sourcestr)
 
    free(subset);
    free(statset);
+   subset = NULL;
+   statset = NULL;
 }
 

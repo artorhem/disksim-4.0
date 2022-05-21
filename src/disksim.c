@@ -97,14 +97,13 @@
  * and any associated documentation will at all times remain with copyright
  * holders.
  */
+#include <disksim_global.h>
+#include <disksim_ioface.h>
+#include <disksim_pfface.h>
+#include <disksim_iotrace.h>
+#include <config.h>
 
-#include "disksim_global.h"
-#include "disksim_ioface.h"
-#include "disksim_pfface.h"
-#include "disksim_iotrace.h"
-#include "config.h"
-
-#include "modules/disksim_global_param.h"
+#include <modules/disksim_global_param.h>
 
 #include <stdio.h>
 #include <signal.h>
@@ -173,7 +172,7 @@ int addtoextraq_check(event *ev)
 
 /* Deallocates an event structure, adding it to the extraq free pool. */
   
-INLINE void addtoextraq (event *temp)
+ void addtoextraq (event *temp)
 {
   // addtoextraq_check(temp);
 
@@ -190,7 +189,7 @@ INLINE void addtoextraq (event *temp)
 /* Allocates an event structure from the extraq free pool; if empty, */
 /* calls allocateextra to create some more.                          */
 
-INLINE event * getfromextraq ()
+ event * getfromextraq ()
 {
   event *temp;
 
@@ -277,7 +276,7 @@ static void disksim_dumpintq ()
 
 /* make this a binheap or something ... avoid walking the list */
 
-INLINE void addtointq (event *newint)
+ void addtointq (event *newint)
 {
   /* WARNING -- HORRIBLE HACK BELOW
    * In order to make the Memulator run (which sometimes has events arrive
@@ -390,7 +389,7 @@ INLINE static event * getfromintq ()
 /* Removes a given event from the intq, thus descheduling it.  Returns */
 /* TRUE if the event was found, FALSE if it was not.                   */
 
-INLINE int removefromintq (event *curr)
+ int removefromintq (event *curr)
 {
    event *tmp;
 

@@ -1069,7 +1069,7 @@ static void add_driver(iodriver *d) {
   disksim->iodriver_info->iodrivers_len = newlen;
   iodrivers = realloc(iodrivers, newlen * sizeof(iodriver *));
   zerocnt = c ? c : 2;
-  bzero((struct iodriver*)iodrivers + c, zerocnt * sizeof(iodriver *));
+  bzero(&(iodrivers[c]), zerocnt * sizeof(iodriver *));
 
   iodrivers[c] = d;
   numiodrivers++;
@@ -1079,13 +1079,11 @@ struct iodriver *disksim_iodriver_loadparams(struct lp_block *b) {
   iodriver *result;
 
   if (disksim->iodriver_info == NULL) {
-    disksim->iodriver_info = malloc (sizeof(iodriver_info_t));
-    bzero ((char *)disksim->iodriver_info, sizeof(iodriver_info_t));
+    disksim->iodriver_info = calloc (1, sizeof(iodriver_info_t));
   }
   overallqueue = ioqueue_createdefaultqueue ();
    
-  result = malloc(sizeof(iodriver));
-  bzero(result, sizeof(iodriver));
+  result = calloc(1, sizeof(iodriver));
 
   add_driver(result);
 
@@ -1155,8 +1153,7 @@ int load_iodriver_topo(struct lp_topospec *t, int len) {
 
 
 static iodriver *driver_copy(iodriver *orig) {
-  iodriver *result = malloc(sizeof(iodriver));
-  bzero(result, sizeof(iodriver));
+  iodriver *result = calloc(1, sizeof(iodriver));
   memcpy(result, orig, sizeof(iodriver));
   result->queue = ioqueue_copy(orig->queue);
   return result;
@@ -1186,7 +1183,7 @@ int iodriver_load_logorg(struct lp_block *b) {
 
   sysorgs = realloc(sysorgs, newlen * sizeof(struct logorg *));
 
-  bzero(sysorgs + zeroOff, 
+  bzero(&(sysorgs[zeroOff]), 
 	(zeroOff ? numsysorgs : 2) * sizeof(struct logorg *));
 
   disksim->iodriver_info->sysorgs_len = newlen;
@@ -1252,6 +1249,7 @@ void iodriver_printstats()
    }
 
    free(queueset);
+   queueset = NULL;
 }
 
 

@@ -113,7 +113,7 @@
 /* Currently, controllers can not communicate via ownership-type buses */
 
 
-INLINE controller * getctlr (int ctlrno)
+ controller * getctlr (int ctlrno)
 {
    ctlrinfo_t *ctlrinfo = disksim->ctlrinfo;
    ASSERT1((ctlrno >= 0) && (ctlrno < ctlrinfo->numcontrollers), "ctlrno", ctlrno);
@@ -430,9 +430,8 @@ int disksim_ctlr_stats_loadparams(struct lp_block *b) {
   ctlrinfo_t *ctlrinfo;
 
   if(disksim->ctlrinfo == NULL) {
-    disksim->ctlrinfo = malloc(sizeof(ctlrinfo_t));
+    disksim->ctlrinfo = calloc(1, sizeof(ctlrinfo_t));
     if(!disksim->ctlrinfo) return 0;
-    bzero((char *)disksim->ctlrinfo, sizeof(ctlrinfo_t));
   }
   ctlrinfo = disksim->ctlrinfo;
 
@@ -446,7 +445,7 @@ int disksim_ctlr_stats_loadparams(struct lp_block *b) {
 
 
 controller *controller_copy(controller *orig) {
-  controller *result = malloc(sizeof(controller));
+  controller *result = calloc(1, sizeof(controller));
   if(!result) return 0;
   memcpy(result, orig, sizeof(controller));
   result->cache = orig->cache->cache_copy(orig->cache);
@@ -488,12 +487,18 @@ struct controller *disksim_ctlr_loadparams(struct lp_block *b)
   {
     int newlen = c ? 2*c : 2;
     int zerooff = (newlen == 2) ? 0 : c;
-    int zerolen = ((newlen == 2) ? 2 : (newlen / 2)) * sizeof(int *);
-    
-    disksim->ctlrinfo->controllers = realloc(disksim->ctlrinfo->controllers,
-					     newlen * sizeof(int *));
-    
-    bzero(disksim->ctlrinfo->controllers + zerooff, zerolen);
+    int zerolen = ((newlen == 2) ? 2 : (newlen / 2));
+
+    if ( zerooff == 0 )
+    {
+      disksim->ctlrinfo->controllers = calloc(newlen, sizeof(void*));
+    }
+    else
+    {
+      disksim->ctlrinfo->controllers = realloc(disksim->ctlrinfo->controllers,
+					       newlen * sizeof(int *));
+      bzero(&(disksim->ctlrinfo->controllers[zerooff]), zerolen*sizeof(int*));
+    }
     disksim->ctlrinfo->ctlrs_len = newlen;
   }
 
@@ -502,9 +507,8 @@ struct controller *disksim_ctlr_loadparams(struct lp_block *b)
   disksim->ctlrinfo->numcontrollers++;
 
   /* allocate a new controller struct */
-  result = malloc(sizeof(controller));
+  result = calloc(1, sizeof(controller));
   if(!result) return 0;
-  bzero(result, sizeof(controller));
 
   disksim->ctlrinfo->controllers[c] = result;
   bzero(result, sizeof(controller));
@@ -800,8 +804,7 @@ int load_ctlr_topo(struct lp_topospec *t, int *inbus) {
   if(!ctlr->outbuses) {
     ctlr->numoutbuses = 0;
     slots = t->l->values_len;
-    ctlr->outbuses = malloc(slots * sizeof(int));
-    bzero(ctlr->outbuses, slots * sizeof(int));
+        ctlr->outbuses = calloc(1, slots * sizeof(int));
   }
 
   for(c = 0; c < t->l->values_len; c++) {

@@ -741,11 +741,9 @@ void simpledisk_setcallbacks ()
 
 static void simpledisk_initialize_diskinfo ()
 {
-   disksim->simplediskinfo = malloc (sizeof(simplediskinfo_t));
-   bzero ((char *)disksim->simplediskinfo, sizeof(simplediskinfo_t));
-   disksim->simplediskinfo->simpledisks = malloc(MAXDEVICES * (sizeof(simpledisk_t)));
+   disksim->simplediskinfo = calloc (1, sizeof(simplediskinfo_t));
+   disksim->simplediskinfo->simpledisks = calloc(1, MAXDEVICES * (sizeof(simpledisk_t)));
    disksim->simplediskinfo->simpledisks_len = MAXDEVICES;
-   bzero ((char *)disksim->simplediskinfo->simpledisks, (MAXDEVICES * (sizeof(simpledisk_t))));
 }
 
 
@@ -810,8 +808,8 @@ int simpledisk_add(struct simpledisk *d) {
     realloc(disksim->simplediskinfo->simpledisks, 
 	    2 * c * sizeof(struct simpledisk *));
 
-  bzero(disksim->simplediskinfo->simpledisks + numsimpledisks, 
-	numsimpledisks);
+  bzero(&(disksim->simplediskinfo->simpledisks[numsimpledisks]), 
+	numsimpledisks*sizeof(void*));
 
   disksim->simplediskinfo->simpledisks[c] = d;
   numsimpledisks++;
@@ -828,9 +826,8 @@ struct simpledisk *disksim_simpledisk_loadparams(struct lp_block *b)
 
   if(!disksim->simplediskinfo) simpledisk_initialize_diskinfo();
 
-  result = malloc(sizeof(struct simpledisk));
+  result = calloc(1, sizeof(struct simpledisk));
   if(!result) return 0;
-  bzero(result, sizeof(struct simpledisk));
   
   num = simpledisk_add(result);
 
@@ -849,8 +846,7 @@ struct simpledisk *disksim_simpledisk_loadparams(struct lp_block *b)
 
 
 struct simpledisk *simpledisk_copy(struct simpledisk *orig) {
-  struct simpledisk *result = malloc(sizeof(struct simpledisk));
-  bzero(result, sizeof(struct simpledisk));
+  struct simpledisk *result = calloc(1, sizeof(struct simpledisk));
   memcpy(result, orig, sizeof(struct simpledisk));
   result->queue = ioqueue_copy(orig->queue);
 

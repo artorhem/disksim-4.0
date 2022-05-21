@@ -97,17 +97,16 @@
  * and any associated documentation will at all times remain with copyright
  * holders.
  */
+#include <disksim_global.h>
+#include <disksim_iosim.h>
+#include <disksim_stat.h>
+#include <disksim_bus.h>
+#include <disksim_ctlr.h>
+#include <disksim_controller.h>
+#include <config.h>
 
-#include "disksim_global.h"
-#include "disksim_iosim.h"
-#include "disksim_stat.h"
-#include "disksim_bus.h"
-#include "disksim_ctlr.h"
-#include "disksim_controller.h"
-#include "config.h"
-
-#include "modules/modules.h"
-#include "memsmodel/modules/modules.h"
+#include <modules/modules.h>
+#include <memsmodel/modules/modules.h>
 
 #include "disksim_device.h"
 
@@ -569,8 +568,9 @@ static int disksim_bus_printarbwaitstats;
 int disksim_bus_stats_loadparams(struct lp_block *b) {
    
   if(!disksim->businfo) {
-    disksim->businfo = malloc(sizeof(businfo_t));
-    bzero(disksim->businfo, sizeof(businfo_t));
+    //disksim->businfo = malloc(sizeof(businfo_t));
+    //bzero(disksim->businfo, sizeof(businfo_t));
+    disksim->businfo = calloc(1, sizeof(businfo_t));
   }
 
 
@@ -681,8 +681,7 @@ bus *disksim_bus_loadparams(struct lp_block *b,
   int c;
 
   if(!disksim->businfo) {
-    disksim->businfo = malloc(sizeof(businfo_t));
-    bzero(disksim->businfo, sizeof(businfo_t));
+    disksim->businfo = calloc(1, sizeof(businfo_t));
   }
 
   //   disksim->businfo->bus_printidlestats = disksim_bus_printidlestats;
@@ -697,11 +696,11 @@ bus *disksim_bus_loadparams(struct lp_block *b,
      int newlen = c ? 2*c : 2;
      
      disksim->businfo->buses = realloc(disksim->businfo->buses,
-				       newlen * sizeof(int*));
+				       newlen * sizeof(void*));
      if(newlen > 2)
-       bzero(disksim->businfo->buses + c, (newlen/2)*sizeof(int *));
+       bzero(&(disksim->businfo->buses[c]), (newlen/2)*sizeof(void*));
      else 
-       bzero(disksim->businfo->buses, 2 * sizeof(int *));
+       bzero(disksim->businfo->buses, newlen * sizeof(void*));
 
      disksim->businfo->buses_len = newlen;
 
@@ -751,8 +750,8 @@ int load_bus_topo(struct lp_topospec *t, int *parentctlno) {
   /* if this bus is the child of a controller */
   if(parentctlno) { b->numslots++; }
 
-  b->slots = malloc(b->numslots * sizeof(slot));
-  bzero(b->slots, b->numslots * sizeof(slot));
+  b->slots = calloc(b->numslots, sizeof(slot));
+  //bzero(b->slots, b->numslots * sizeof(slot));
 
   if(parentctlno) {
     b->slots[0].devtype = CONTROLLER;

@@ -53,7 +53,7 @@ LIBPARAM_SRC =  util.c libparam.tab.c  lex.libparam.c
 LIBPARAM_OBJ = $(LIBPARAM_SRC:.c=.o)
 
 libparam.a: $(LIBPARAM_OBJ)
-	ar cru $@ $^ 
+	ar crus $@ $^ 
 
 
 dump_tlts: dump_tlts.o libparam.a

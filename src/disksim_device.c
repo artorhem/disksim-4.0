@@ -119,10 +119,9 @@ getdevbyname(char *name,
 
 void device_initialize_deviceinfo (void)
 {
-   if (disksim->deviceinfo == NULL) {
-      disksim->deviceinfo = malloc (sizeof(device_info_t));
-      bzero ((char *)disksim->deviceinfo, sizeof(device_info_t));
-   }
+  if (disksim->deviceinfo == NULL) {
+    disksim->deviceinfo = calloc (1, sizeof(device_info_t));
+  }
 }
 
 void device_add(struct device_header *d, int ldevno) {

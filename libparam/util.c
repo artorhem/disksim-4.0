@@ -43,7 +43,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include <libgen.h>
+//#include <libgen.h>
 
 #include "libparam.h"
 #include "bitvector.h"

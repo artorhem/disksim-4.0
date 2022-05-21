@@ -41,7 +41,7 @@ FREEBLOCKS_OFLAGS =
 DEBUG_OFLAGS = -g -DASSERTS # -DDEBUG=1
 PROF_OFLAGS = -g -DASSERTS -p
 GPROF_OFLAGS = -g -DASSERTS -pg
-CFLAGS = -I. $(DISKMODEL_CFLAGS) $(LIBPARAM_CFLAGS) $(LIBDDBG_CFLAGS) $(DEBUG_OFLAGS) $(FREEBLOCKS_OFLAGS) $(MEMSMODEL_CFLAGS) -D_INLINE 
+CFLAGS = -I. $(DISKSIM_CFLAGS) $(DISKMODEL_CFLAGS) $(LIBPARAM_CFLAGS) $(LIBDDBG_CFLAGS) $(DEBUG_OFLAGS) $(FREEBLOCKS_OFLAGS) $(MEMSMODEL_CFLAGS) -D_INLINE 
 
 FBSYSSIM_OFLAGS = -O6 -fomit-frame-pointer -fexpensive-optimizations -fschedule-insns2
 
@@ -119,7 +119,7 @@ hplcomb : hplcomb.c
 	$(CC) $< -o $@
 
 libdisksim.a: $(MODULEDEPS) $(DISKSIM_OBJ) disksim_interface.o
-	ar cru $@ $(DISKSIM_OBJ) disksim_interface.o modules/*.o
+	ar crus $@ $(DISKSIM_OBJ) disksim_interface.o modules/*.o
 	ranlib $@
 	mkdir -p ../lib
 	cp libdisksim.a ../lib

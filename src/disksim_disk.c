@@ -98,14 +98,14 @@
  * holders.
  */
 
-#include "disksim_global.h"
-#include "disksim_iosim.h"
-#include "disksim_stat.h"
-#include "disksim_disk.h"
-#include "disksim_ioqueue.h"
-#include "config.h"
+#include <disksim_global.h>
+#include <disksim_iosim.h>
+#include <disksim_stat.h>
+#include <disksim_disk.h>
+#include <disksim_ioqueue.h>
+#include <config.h>
 
-#include "modules/modules.h"
+#include <modules/modules.h>
 
 static void disk_initialize_diskinfo ();
 
@@ -117,8 +117,7 @@ static char *statdesc_xfertimestats	=	"Transfer time";
 static char *statdesc_postimestats	=	"Positioning time";
 static char *statdesc_acctimestats	=	"Access time";
 
-
-INLINE struct disk *getdisk (int diskno)
+ struct disk *getdisk (int diskno)
 {
    disk *currdisk;
    ASSERT1((diskno >= 0) && (diskno < MAXDEVICES), "diskno", diskno);
@@ -146,7 +145,7 @@ int disk_add(struct disk *d) {
   /* note that numdisks must be equal to diskinfo->disks_len */
   disksim->diskinfo->disks = realloc(disksim->diskinfo->disks, 
 			   2 * NUMDISKS * sizeof(disk *));
-  bzero(disksim->diskinfo->disks + NUMDISKS, NUMDISKS);
+  bzero(&(disksim->diskinfo->disks[NUMDISKS]), NUMDISKS*sizeof(disk*));
   disksim->diskinfo->disks[c] = d;
   NUMDISKS++;
   disksim->diskinfo->disks_len *= 2;
@@ -412,9 +411,9 @@ static void disk_postpass_perdisk (disk *currdisk)
     fprintf(stderr, "Must have more segments than dedicated write segments\n");
     ddbg_assert(0);;
   }
-  if (((int)currdisk->dedicatedwriteseg != 0) &&
-      ((int)currdisk->dedicatedwriteseg != 1)) {
-    fprintf(stderr, "Invalid value for dedicatedwriteseg in disk_postpass_perdisk: %d\n", (int)currdisk->dedicatedwriteseg);
+  if ((currdisk->dedicatedwriteseg != NULL) &&
+      (currdisk->dedicatedwriteseg != (void*)1)) {
+    fprintf(stderr, "Invalid value for dedicatedwriteseg in disk_postpass_perdisk: %ld\n", (long)currdisk->dedicatedwriteseg);
     ddbg_assert(0);;
   }
 
@@ -500,12 +499,10 @@ void disk_setcallbacks ()
 
 static void disk_initialize_diskinfo ()
 {
-  disksim->diskinfo = malloc (sizeof(disk_info_t));
-  bzero ((char *)disksim->diskinfo, sizeof(disk_info_t));
+  disksim->diskinfo = calloc (1, sizeof(disk_info_t));
 
-  disksim->diskinfo->disks = (struct disk**) malloc(MAXDEVICES * sizeof(disk));
+  disksim->diskinfo->disks = (struct disk**) calloc(1, MAXDEVICES * sizeof(disk));
   disksim->diskinfo->disks_len = MAXDEVICES;
-  bzero ((char *)disksim->diskinfo->disks, (MAXDEVICES * sizeof(disk)));
 
   /* important initialization of stuff that gets remapped into diskinfo */
   disk_printhacktime = 0.0;
@@ -870,9 +867,9 @@ disk *disksim_disk_loadparams(struct lp_block *b,
   disk_postpass();
   disk_syncset_init();
 
-  result = malloc(sizeof(disk));
+  result = calloc(1, sizeof(disk));
   if(!result) return 0;
-  memset(result, 0, sizeof(struct disk));
+  //  memset(result, 0, sizeof(struct disk));
 
   result->hdr = disk_hdr_initializer;
   result->hdr.device_name = strdup(b->name);

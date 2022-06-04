@@ -1,3 +1,5 @@
+*.c~
+valid/*.outv
 diskmodel/convert.d
 diskmodel/convert.o
 diskmodel/dm_load.d

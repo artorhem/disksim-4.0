@@ -34,12 +34,14 @@ all: libparam.a
 	mkdir -p lib include/libparam
 	cp -p libparam.a lib
 	cp -p bitvector.h libparam.h include/libparam
+	chmod 777 mod.pl
+	chmod 777 make_modules_h.pl
 
 FLEX=flex
 BISON=bison
 YACC=$(BISON)
 
-CFLAGS=-g -I$(LIBDDBG_INCL) -Wall
+CFLAGS=-g -O2 -I$(LIBDDBG_INCL) -Wall
 
 # input file parser
 lex.libparam.c:	libparam.lex libparam.tab.h libparam.h
